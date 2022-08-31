@@ -17,15 +17,31 @@ mysql.init_app(app)
 def main():
     return render_template('exemplomvc.html')
 
+# Rota de inserção de dados no Banco
+
 @app.route('/gravar', methods=['POST', 'GET'])
 def gravar():
-    nome = request.form['Seu Nome']
-    email = request.form['email']
-    senha = request.form['senha']
-    if nome and email and senha: # se não for valor nulo
-        conn = mysql.connect() # cria conexão com mysql
-        cursor = conn.cursor() # cria um cursos que conecta no banco
-        cursor.execute('insert into tbl_user (user_seunome, user_username, user_password) VALUES (%s, %s, %s)', (nome, email, senha))
-        conn.commit()
-    return render_template('exemplomvc.html')
+    nome = request.form['Seu Nome'] # Lê do formulário o valor nome
+    email = request.form['email'] # Lê do formulário o e-mail
+    senha = request.form['senha'] # Obtem do formulário a senha
+    if nome and email and senha: # verifica se o valor de nenhum for nulo
+        conn = mysql.connect() # Estabelece a conexão com mysql
+        cursor = conn.cursor() # Cria um cursor de uma sessão de comunicação com o banco
+        cursor.execute('insert into dados_user (user_seunome, user_email, user_password) VALUES (%s, %s, %s)', (nome, email, senha)) # Cria o comando "insert" pra inserir dados no banco" referenciando os dados com as variáveis (%s é passar parametro do tipo string)
+        conn.commit() # Executa o comando
+    return render_template('exemplomvc.html') # Faz a volta da comunicação
 
+# Rota de resposta da pesquisa no banco
+
+@app.route('/listar', mathods= ['POST', 'GET'])
+def listar():
+    conn = mysql.connect() # Estabelece a conexão com o banco de dados
+    cursor = conn.cursor() # Cria a sessão por meio de um cursor
+    conn.execute('select user_seunome, user_seu_email, user_password from dados_user') # Cria o comando "select" para realizar busca de dados na tabela informada -> (dados_user)
+    data = cursor.fetchall() # Faz o comando "fetchall" para fazer a recuperação de dados / Atribuindo o resultado pra variável "data"
+    conn.commit() # Executa o comando
+    return render_template('lista.html', datas = data) # Retorna pro arquivo chamado "lista.html" na pasta de templates / com a variável data com o nome datas que é o nome que ela está sendo referenciado pelo jinja no arquivo lista.html
+
+if __name__ == "__main__":
+    port = int(os.environ.get('PORT', 5008))
+    app.run(host='0.0.0.0', port = port)
