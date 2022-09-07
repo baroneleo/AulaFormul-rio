@@ -3,13 +3,13 @@ from flask import Flask, render_template, request
 from flaskext.mysql import MySQL
 
 mysql = MySQL()
-app = Flask(__name__)
+app = Flask(__name__, template_folder='template')
 
 # MySQL configurations
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'mudar123'
-app.config['MYSQL_DATABASE_DB'] = 'teste'
-app.config['MYSQL_DATABASE_HOST'] = '172.17.0.2'
+app.config['MYSQL_DATABASE_PASSWORD'] = '3262253'
+app.config['MYSQL_DATABASE_DB'] = 'ac1'
+app.config['MYSQL_DATABASE_HOST'] = '127.0.0.1'
 mysql.init_app(app)
 
 @app.route('/')
@@ -18,7 +18,7 @@ def main():
 
 # Rota de inserção de dados no Banco
 
-@app.route('/gravar', methods=['POST', 'GET'])
+@app.route('/gravar', methods=['POST'])
 def gravar():
     nome = request.form['nome'] # Lê do formulário o valor nome
     cpf = request.form['cpf'] # Lê do formulário o cpf
@@ -27,7 +27,7 @@ def gravar():
     if nome and cpf and endereco and senha: # verifica se o valor de nenhum for nulo
         conn = mysql.connect() # Estabelece a conexão com mysql
         cursor = conn.cursor() # Cria um cursor de uma sessão de comunicação com o banco
-        cursor.execute('insert into tbl_user (user_nome, user_cpf, user_endereco, user_password) VALUES (%s, %s, %s, %s)', (nome, cpf, endereco, senha)) # Cria o comando "insert" pra inserir dados no banco" referenciando os dados com as variáveis (%s é passar parametro do tipo string)
+        cursor.execute('insert into ac1 (nome, cpf, endereco, senha) VALUES (%s, %s, %s, %s)', (nome, cpf, endereco, senha)) # Cria o comando "insert" pra inserir dados no banco" referenciando os dados com as variáveis (%s é passar parametro do tipo string)
         conn.commit() # Executa o comando
     return render_template('formulario.html') # Faz a volta da comunicação
 
@@ -37,7 +37,7 @@ def gravar():
 def listar():
     conn = mysql.connect() # Estabelece a conexão com o banco de dados
     cursor = conn.cursor() # Cria a sessão por meio de um cursor
-    conn.execute('select user_nome, user_cpf, user_endereco, password from tbl_user') # Cria o comando "select" para realizar busca de dados na tabela informada -> (dados_user)
+    conn.execute('select nome, cpf, endereco, senha from ac1') # Cria o comando "select" para realizar busca de dados na tabela informada -> (dados_user)
     data = cursor.fetchall() # Faz o comando "fetchall" para fazer a recuperação de dados / Atribuindo o resultado pra variável "data"
     conn.commit() # Executa o comando
     return render_template('lista.html', datas = data) # Retorna pro arquivo chamado "lista.html" na pasta de templates / com a variável data com o nome datas que é o nome que ela está sendo referenciado pelo jinja no arquivo lista.html
