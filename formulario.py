@@ -33,7 +33,7 @@ def gravar():
 
 # Rota de resposta da pesquisa no banco
 
-@app.route('/listar', mathods= ['POST', 'GET'])
+@app.route('/listar', methods= ['POST', 'GET'])
 def listar():
     conn = mysql.connect() # Estabelece a conexão com o banco de dados
     cursor = conn.cursor() # Cria a sessão por meio de um cursor
